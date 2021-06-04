@@ -1,5 +1,8 @@
 package com.example.common;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -9,7 +12,17 @@ import lombok.Data;
 @Data
 public class ExcelCellStyle {
     private XSSFWorkbook wb;
-    // 「届出」シートの社員テーブルのセルスタイル
+    
+    // セルスタイルテンプレート
+    // 枠線、水平・垂直位置センタリング
+    private XSSFCellStyle centeredThinBorderStyle;
+    // 薄い枠線でスタイルを初期化
+
+
+
+
+    // 「届出」シート
+    // 社員テーブルのセルスタイル
     private XSSFCellStyle notificationEmployeeInfoTable;
     private XSSFCellStyle notificationTableHeaderNorm;
     private XSSFCellStyle notificationTableHeaderLeftDash;
@@ -31,21 +44,41 @@ public class ExcelCellStyle {
     public ExcelCellStyle(XSSFWorkbook wb){
         // ワークブック
         this.wb = wb;
+        // セルスタイル様式の初期化
+        centeredThinBorderStyle = wb.createCellStyle();
+        centeredThinBorderStyle.setAlignment(HorizontalAlignment.CENTER);
+        centeredThinBorderStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        centeredThinBorderStyle.setBorderBottom(BorderStyle.THIN);
+        centeredThinBorderStyle.setBorderTop(BorderStyle.THIN);
+        centeredThinBorderStyle.setBorderLeft(BorderStyle.THIN);
+        centeredThinBorderStyle.setBorderRight(BorderStyle.THIN);
+        // 「届出」
         // セルスタイルの作成
-        this.notificationEmployeeInfoTable      = wb.createCellStyle();
-        this.notificationTableHeaderNorm        = wb.createCellStyle();
-        this.notificationTableHeaderLeftDash    = wb.createCellStyle();
-        this.notificationTableHeaderRightDash   = wb.createCellStyle();
-        this.styleNotificationTitleYear         = wb.createCellStyle();
-        this.notificationFooterStyle            = wb.createCellStyle();
+        notificationEmployeeInfoTable = wb.createCellStyle();
+        notificationEmployeeInfoTable.cloneStyleFrom(centeredThinBorderStyle);
+        notificationTableHeaderNorm = wb.createCellStyle();
+        notificationTableHeaderNorm.cloneStyleFrom(centeredThinBorderStyle);
+        notificationTableHeaderLeftDash = wb.createCellStyle();
+        notificationTableHeaderLeftDash.cloneStyleFrom(centeredThinBorderStyle);
+        notificationTableHeaderRightDash = wb.createCellStyle();
+        notificationTableHeaderRightDash.cloneStyleFrom(centeredThinBorderStyle);
+        notificationFooterStyle = wb.createCellStyle();
+        notificationFooterStyle.cloneStyleFrom(centeredThinBorderStyle);
+        // YYYY年度 届出タイトル部分のスタイル
+        styleNotificationTitleYear = wb.createCellStyle();
+        fontNotificationTitleYear.setBold(true);
+        fontNotificationTitleYear.setFontHeightInPoints((short)16);;
+        fontNotificationTitleYear.setFontName("ＭＳ Ｐ明朝");
+
         // フォントの作成
-        this.notificationEmployeeInfoTableFont      = wb.createFont();
-        this.notificationTableHeaderNormFont        = wb.createFont();
-        this.notificationTableHeaderLeftDashFont    = wb.createFont();
-        this.notificationTableHeaderRightDashFont   = wb.createFont();
-        this.styleNotificationTitleYearFont         = wb.createFont();
-        this.notificationFooterFont                 = wb.createFont();
-        this.fontNotificationTitleYear                = wb.createFont();
+        notificationEmployeeInfoTableFont      = wb.createFont();
+        notificationTableHeaderNormFont        = wb.createFont();
+        notificationTableHeaderLeftDashFont    = wb.createFont();
+        notificationTableHeaderRightDashFont   = wb.createFont();
+        styleNotificationTitleYearFont         = wb.createFont();
+        notificationFooterFont                 = wb.createFont();
+        fontNotificationTitleYear              = wb.createFont();
+
         // フォントの設定をセット
         notificationEmployeeInfoTableFont.setFontName("ＭＳ ゴシック");;
         notificationTableHeaderNormFont.setBold(true);
@@ -56,7 +89,7 @@ public class ExcelCellStyle {
         notificationFooterFont.setFontName("Century");
         notificationFooterFont.setFontHeightInPoints((short)16);
         notificationFooterFont.setBold(true);
-        notificationFooterFont.setColor(ExcelFont.footer);
+        notificationFooterFont.setColor(ExcelColor.footer);
 
         fontNotificationTitleYear.setBold(true);
         fontNotificationTitleYear.setFontHeightInPoints((short)16);;
@@ -71,7 +104,7 @@ public class ExcelCellStyle {
         // notificationTableHeaderLeftDash 
         // notificationTableHeaderRightDash
         // styleNotificationTitleYear      
-        notificationFooterStyle.setFillForegroundColor(ExcelFont.footer);         
+        notificationFooterStyle.setFillForegroundColor(ExcelColor.footer);         
 
 
     }

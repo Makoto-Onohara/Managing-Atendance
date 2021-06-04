@@ -11,7 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import com.example.common.ExcelFont;
+import com.example.common.ExcelCellStyle;
+import com.example.common.ExcelColor;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -37,6 +38,7 @@ public class App
     public static void main( String[] args ) throws IOException
     {
         
+
         // 社員情報
         String name = "大野原信";     // 名前
         String employeeCode = "00249"; // 社員番号
@@ -66,6 +68,8 @@ public class App
         // create a new workbook
         XSSFWorkbook wb = new XSSFWorkbook();
         
+        // セルスタイル保持クラスを生成
+        // ExcelCellStyle cellStyle = new ExcelCellStyle(wb);
         // create a new sheet
         List<XSSFSheet> sheetList = new ArrayList<>();
         sheetList.add(wb.createSheet("届出"));
@@ -85,12 +89,13 @@ public class App
         notificationEmployeeInfoTable.setBorderTop(BorderStyle.THIN);
         notificationEmployeeInfoTable.setBorderLeft(BorderStyle.THIN);
         notificationEmployeeInfoTable.setBorderRight(BorderStyle.THIN);
-        
         notificationEmployeeInfoTable.setFont(notificationEmployeeInfoTableFont);
         // ヘッダー部分のノーマルスタイル
         XSSFCellStyle notificationTableHeaderNorm = wb.createCellStyle();
         XSSFFont notificationTableHeaderNormFont = wb.createFont();
         notificationTableHeaderNorm.cloneStyleFrom(notificationEmployeeInfoTable);
+        notificationTableHeaderNorm.setFillForegroundColor(ExcelColor.blueNote);
+        notificationTableHeaderNorm.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         notificationTableHeaderNormFont.setBold(true);
         notificationTableHeaderNormFont.setFontName("ＭＳ Ｐゴシック");
         notificationTableHeaderNorm.setFont(notificationTableHeaderNormFont);
@@ -105,6 +110,14 @@ public class App
         sheetNotification.addMergedRegion(new CellRangeAddress(2, 2, 2, 3));
         sheetNotification.addMergedRegion(new CellRangeAddress(3, 3, 0, 1));
         sheetNotification.addMergedRegion(new CellRangeAddress(3, 3, 2, 3));
+        sheetNotification.addMergedRegion(new CellRangeAddress(5, 5, 0, 1));
+        sheetNotification.addMergedRegion(new CellRangeAddress(5, 5, 3, 5));
+        sheetNotification.addMergedRegion(new CellRangeAddress(5, 5, 6, 8));
+        sheetNotification.addMergedRegion(new CellRangeAddress(5, 6, 2, 2));
+        sheetNotification.addMergedRegion(new CellRangeAddress(5, 6, 9, 9));
+        sheetNotification.addMergedRegion(new CellRangeAddress(5, 6, 10, 10));
+        sheetNotification.addMergedRegion(new CellRangeAddress(5, 6, 11, 11));
+
 
     // ココから「届出」シート
         for( int i = 0; i < rowSizeNotification; i++ ){
@@ -123,6 +136,7 @@ public class App
         fontNotificationTitleYear.setFontHeightInPoints((short)16);;
         fontNotificationTitleYear.setFontName("ＭＳ Ｐ明朝");
         styleNotificationTitleYear.setFont(fontNotificationTitleYear);
+        cell.setCellStyle(styleNotificationTitleYear);
         cell.setCellStyle(styleNotificationTitleYear);
         // 社員情報
         row = sheetNotification.getRow(2);
@@ -168,7 +182,7 @@ public class App
         notificationFooterFont.setFontName("Century");
         notificationFooterFont.setFontHeightInPoints((short)16);
         notificationFooterFont.setBold(true);
-        notificationFooterFont.setColor(ExcelFont.footer);
+        notificationFooterFont.setColor(ExcelColor.footer);
         notificationFooterStyle.setFont(notificationFooterFont);
         notificationFooterStyle.setAlignment(HorizontalAlignment.CENTER);
         notificationFooterStyle.setVerticalAlignment(VerticalAlignment.CENTER);
@@ -359,7 +373,7 @@ public class App
         styleTableHeader.setAlignment(HorizontalAlignment.CENTER);        
         styleTableHeader.setVerticalAlignment(VerticalAlignment.CENTER);
         styleTableHeader.setFont(fontTableHeader);
-        styleTableHeader.setFillForegroundColor(ExcelFont.blue);
+        styleTableHeader.setFillForegroundColor(ExcelColor.blue);
         styleTableHeader.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         cell.setCellStyle(styleTableHeader);
         cell = row.getCell(1);
@@ -391,7 +405,7 @@ public class App
         // 平日のスタイル
         XSSFCellStyle styleWeekDay = wb.createCellStyle();
         styleWeekDay.setAlignment(HorizontalAlignment.CENTER);
-        styleWeekDay.setFillForegroundColor(ExcelFont.blue);
+        styleWeekDay.setFillForegroundColor(ExcelColor.blue);
         styleWeekDay.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         Font fontWeekDay = wb.createFont();
         fontWeekDay.setFontName("ＭＳ Ｐゴシック");
@@ -400,7 +414,7 @@ public class App
         // 平日以外のスタイル
         XSSFCellStyle styleWeekEnd = wb.createCellStyle();
         styleWeekEnd.setAlignment(HorizontalAlignment.CENTER);
-        styleWeekEnd.setFillForegroundColor(ExcelFont.blue);
+        styleWeekEnd.setFillForegroundColor(ExcelColor.blue);
         styleWeekEnd.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         Font fontWeekEnd = wb.createFont();
         fontWeekEnd.setColor(IndexedColors.RED.index);
@@ -410,7 +424,7 @@ public class App
         // 右３列のスタイル
         XSSFCellStyle styleThreeRightColumn = wb.createCellStyle();
         styleThreeRightColumn.setAlignment(HorizontalAlignment.CENTER);
-        styleThreeRightColumn.setFillForegroundColor(ExcelFont.yellow);
+        styleThreeRightColumn.setFillForegroundColor(ExcelColor.yellow);
         styleThreeRightColumn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         styleThreeRightColumn.setFont(fontWeekDay); // フォントは平日と同じ 
 
