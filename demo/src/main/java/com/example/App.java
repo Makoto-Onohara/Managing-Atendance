@@ -11,8 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import com.example.common.ExcelCellStyle;
 import com.example.common.ExcelColor;
+import com.example.common.TodokedeHeight;
+import com.example.common.TodokedeWidth;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -47,7 +48,14 @@ public class App
             "提出", "", "区分", "開始", "", "", "終了", "", "","日数","承認","備考(自由等)",
             "月","日", "", "月","日","時間","月","日","時間", "", "", ""
         };
-        
+        String[] articleNoteStrings = {
+            "有給休暇", "振替休日", "生理休暇", "慶弔休暇", "特別休暇",
+            "欠勤", "遅刻", "早退", "私用外出", "出張",
+            "振替出勤", "住所変更", "結婚", "出生", "その他"
+        };
+        String[] articleNoteStatStrings = {
+            "未", "済", "事後"
+        };
         // エクセルを保存するディレクトリ
         Path dir = Path.of("C:/Users/yumasky/Desktop/work/VScode/managing-atendance/apachepoi/");
         // define a file name
@@ -82,13 +90,14 @@ public class App
         // シート［届出」のセルスタイル
         // 社員情報のスタイル
         XSSFCellStyle notificationEmployeeInfoTable = wb.createCellStyle();
-        XSSFFont notificationEmployeeInfoTableFont = wb.createFont();
         notificationEmployeeInfoTable.setAlignment(HorizontalAlignment.CENTER);
         notificationEmployeeInfoTable.setVerticalAlignment(VerticalAlignment.CENTER);
         notificationEmployeeInfoTable.setBorderBottom(BorderStyle.THIN);
         notificationEmployeeInfoTable.setBorderTop(BorderStyle.THIN);
         notificationEmployeeInfoTable.setBorderLeft(BorderStyle.THIN);
         notificationEmployeeInfoTable.setBorderRight(BorderStyle.THIN);
+        XSSFFont notificationEmployeeInfoTableFont = wb.createFont();
+        notificationEmployeeInfoTableFont.setFontName("ＭＳ ゴシック");
         notificationEmployeeInfoTable.setFont(notificationEmployeeInfoTableFont);
         // ヘッダー部分のノーマルスタイル
         XSSFCellStyle notificationTableHeaderNorm = wb.createCellStyle();
@@ -102,14 +111,41 @@ public class App
         // ヘッダー部分の左破線
         XSSFCellStyle notificationTableHeaderLeftDash = wb.createCellStyle();
         notificationTableHeaderLeftDash.cloneStyleFrom(notificationTableHeaderNorm);
+        notificationTableHeaderLeftDash.setBorderLeft(BorderStyle.DASHED);
         // ヘッダー部分の右破線
         XSSFCellStyle notificationTableHeaderRightDash = wb.createCellStyle();
         notificationTableHeaderRightDash.cloneStyleFrom(notificationTableHeaderNorm);
+        notificationTableHeaderRightDash.setBorderRight(BorderStyle.DASHED);
+        // ヘッダー部分の両側破線
+        XSSFCellStyle notificationTableHeaderBothDash = wb.createCellStyle();
+        notificationTableHeaderBothDash.cloneStyleFrom(notificationTableHeaderNorm);
+        notificationTableHeaderBothDash.setBorderLeft(BorderStyle.DASHED);
+        notificationTableHeaderBothDash.setBorderRight(BorderStyle.DASHED);
+        XSSFCellStyle notificationTableNorm = wb.createCellStyle();
+        notificationTableNorm.cloneStyleFrom(notificationEmployeeInfoTable);
+        // ヘッダー以外の左破線
+        XSSFCellStyle notificationTableLeftDash = wb.createCellStyle();
+        notificationTableLeftDash.cloneStyleFrom(notificationTableHeaderLeftDash);
+        notificationTableLeftDash.setFillPattern(FillPatternType.NO_FILL);
+        // ヘッダー以外の右破線
+        XSSFCellStyle notificationTableRightDash = wb.createCellStyle();
+        notificationTableRightDash.cloneStyleFrom(notificationTableHeaderRightDash);
+        notificationTableRightDash.setFillPattern(FillPatternType.NO_FILL);
+        // ヘッダー以外の両側破線
+        XSSFCellStyle notificationTableBothDash = wb.createCellStyle();
+        notificationTableBothDash.cloneStyleFrom(notificationTableHeaderBothDash);
+        notificationTableBothDash.setFillPattern(FillPatternType.NO_FILL);
+
+
+
+
+
         // セルの結合
+        sheetNotification.addMergedRegion(new CellRangeAddress(0, 0, 0, 4));
         sheetNotification.addMergedRegion(new CellRangeAddress(2, 2, 0, 1));
-        sheetNotification.addMergedRegion(new CellRangeAddress(2, 2, 2, 3));
+        sheetNotification.addMergedRegion(new CellRangeAddress(2, 2, 2, 4));
         sheetNotification.addMergedRegion(new CellRangeAddress(3, 3, 0, 1));
-        sheetNotification.addMergedRegion(new CellRangeAddress(3, 3, 2, 3));
+        sheetNotification.addMergedRegion(new CellRangeAddress(3, 3, 2, 4));
         sheetNotification.addMergedRegion(new CellRangeAddress(5, 5, 0, 1));
         sheetNotification.addMergedRegion(new CellRangeAddress(5, 5, 3, 5));
         sheetNotification.addMergedRegion(new CellRangeAddress(5, 5, 6, 8));
@@ -118,8 +154,9 @@ public class App
         sheetNotification.addMergedRegion(new CellRangeAddress(5, 6, 10, 10));
         sheetNotification.addMergedRegion(new CellRangeAddress(5, 6, 11, 11));
 
-
-    // ココから「届出」シート
+        /**
+         * ココから「届出」シート
+         */
         for( int i = 0; i < rowSizeNotification; i++ ){
             row = sheetNotification.createRow(i);
             for(int j = 0; j < colSizeNotification; j++){
@@ -136,6 +173,7 @@ public class App
         fontNotificationTitleYear.setFontHeightInPoints((short)16);;
         fontNotificationTitleYear.setFontName("ＭＳ Ｐ明朝");
         styleNotificationTitleYear.setFont(fontNotificationTitleYear);
+        styleNotificationTitleYear.setVerticalAlignment(VerticalAlignment.CENTER);
         cell.setCellStyle(styleNotificationTitleYear);
         cell.setCellStyle(styleNotificationTitleYear);
         // 社員情報
@@ -150,30 +188,73 @@ public class App
         cell = row.getCell(2);
         cell.setCellValue(name);
         for(int i = 2; i < 4; i++){
-            for(int j = 0; j < 4; j++){
+            for(int j = 0; j < 5; j++){
                 sheetNotification.getRow(i).getCell(j).setCellStyle(notificationEmployeeInfoTable);
             }
         }
         // テーブル部分作成
         for(int i = 5; i < 47; i++){
+            // 行番号のループ
             row = sheetNotification.getRow(i);
             for(int j = 0; j < 12; j++){
+                // 列番号のループ
                 cell = row.getCell(j);
                 if(i == 5){
+                    // テーブル最初の行
                     cell.setCellValue(notificationHeaderStrings[j]);
                     cell.setCellStyle(notificationTableHeaderNorm);
                 } else if(i == 6){
+                    // テーブル２番めの行
                     cell.setCellValue(notificationHeaderStrings[j + 12]);    
-                    cell.setCellStyle(notificationTableHeaderNorm);
+                    // cell.setCellStyle(notificationTableHeaderNorm);
+                    switch(j){
+                        case 0: case 3: case 6:
+                            cell.setCellStyle(notificationTableHeaderRightDash);
+                            break;
+                        case 1: case 5: case 8:
+                            cell.setCellStyle(notificationTableHeaderLeftDash);
+                            break;
+                        case 4: case 7:
+                            cell.setCellStyle(notificationTableHeaderBothDash);
+                            break;
+                        default:
+                            cell.setCellStyle(notificationTableHeaderNorm);
+                    }
                 } else {
-                    cell.setCellStyle(notificationEmployeeInfoTable);
+                    // テーブル３番目以降
+                    switch(j){
+                        case 0: case 3: case 6:
+                            cell.setCellStyle(notificationTableRightDash);
+                            // デバッグ用
+                            // System.out.print("i:j" + i + ":" + j);
+                            // System.out.print("セルのスタイル：" + cell.getCellStyle().getBorderRight());
+                            break;
+                            case 1: case 5: case 8:
+                            cell.setCellStyle(notificationTableLeftDash);
+                            // デバッグ用
+                            // System.out.print("i:j" + i + ":" + j);
+                            // System.out.print("セルのスタイル：" + cell.getCellStyle().getBorderRight());
+                            break;
+                            case 4: case 7:
+                            cell.setCellStyle(notificationTableBothDash);
+                            // デバッグ用
+                            // System.out.print("i:j" + i + ":" + j);
+                            // System.out.print("セルのスタイル：" + cell.getCellStyle().getBorderRight());
+                            break;
+                        default:
+                            cell.setCellStyle(notificationTableNorm);
+                    }
                 }
 
 
             }
 
         }
-        // フッター部分
+
+        // デバッグ用出力
+        // System.out.println("月のカラムの枠線：" + sheetNotification.getRow(6).getCell(0).getCellStyle().getBorderRight());
+
+        // フッター部分(48行目)
         row = sheetNotification.getRow(47);
         cell = row.getCell(0);
         cell.setCellValue("MicroMagic INC.");
@@ -190,10 +271,62 @@ public class App
         cell.setCellStyle(notificationFooterStyle);
         sheetNotification.addMergedRegion(new CellRangeAddress(47,47,0,11));
 
+        // 項目テーブル
+        // セルスタイル
+        XSSFCellStyle articleStyle = wb.createCellStyle();
+        articleStyle.cloneStyleFrom(notificationEmployeeInfoTable);
+        articleStyle.setAlignment(HorizontalAlignment.LEFT);
+        XSSFFont articleFont = wb.createFont();
+        articleFont.setFontName("ＭＳ 明朝");
+        articleFont.setFontHeight(10.5);
+        XSSFCellStyle articleStyleNum = wb.createCellStyle();
+        articleStyleNum.cloneStyleFrom(articleStyle);
+        articleStyleNum.setAlignment(HorizontalAlignment.RIGHT);
+        // セルの作成
+        for(int i = 5; i < 20; i++){
+            row = sheetNotification.getRow(i);
+            for(int j = 14; j < 17; j++){
+                if(i >= 8 && j == 16){
+                    continue;
+                }
+                cell = row.createCell(j);
+                cell.setCellStyle(articleStyle);
+                if(j == 14){
+                    cell.setCellValue(i - 4);
+                    cell.setCellStyle(articleStyleNum);
+                }
+                if(j == 15){
+                    cell.setCellValue(articleNoteStrings[i - 5]);
+                }
+                if(j == 16 && i < 8){
+                    cell.setCellValue(articleNoteStatStrings[i - 5]);
+                }
 
 
 
-    // ココから「５月」シート
+            }
+        }
+        // カラム幅の指定
+        for(int i = 0; i < 17; i++){
+            sheetNotification.setColumnWidth(i, TodokedeWidth.width[i]);
+        }
+        // 高さの指定
+        for(int i = 0; i < 48; i++){
+            if(i < 5){
+                sheetNotification.getRow(i).setHeight(TodokedeHeight.todokedeHeight[i]);
+            } else if(i < 47){
+                sheetNotification.getRow(i).setHeight(TodokedeHeight.todokedeHeight[5]);
+            } else {
+                sheetNotification.getRow(i).setHeight(TodokedeHeight.todokedeHeight[6]);
+            }
+        }
+
+        
+
+        
+        /**
+         * ココから「５月」シート
+         */
         for( int i = 0; i < rowSize; i++ ){
             row = sheet.createRow(i);
             for(int j = 0; j < colSize; j++){
