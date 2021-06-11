@@ -81,9 +81,9 @@ public class CreateExcel {
         this.createWorkbook(); 
         // 届出シートの作成
         this.createTodokede();
-
+        // 振替出勤管理表シートの作成
         this.createFurikae();
-
+        // 月ごとの報告書シート作成
         this.createMonthly();
 
         try {
@@ -145,7 +145,7 @@ public class CreateExcel {
         XSSFCellStyle notificationTableHeaderNorm = wb.createCellStyle();
         XSSFFont notificationTableHeaderNormFont = wb.createFont();
         notificationTableHeaderNorm.cloneStyleFrom(notificationEmployeeInfoTable);
-        notificationTableHeaderNorm.setFillForegroundColor(ExcelColor.blueNote);
+        notificationTableHeaderNorm.setFillForegroundColor(ExcelColor.BLUE_NOTE);
         notificationTableHeaderNorm.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         notificationTableHeaderNormFont.setBold(true);
         notificationTableHeaderNormFont.setFontName(PMINCHO);
@@ -312,7 +312,7 @@ public class CreateExcel {
         notificationFooterFont.setFontName(CENTURY);
         notificationFooterFont.setFontHeightInPoints((short) 16);
         notificationFooterFont.setBold(true);
-        notificationFooterFont.setColor(ExcelColor.footer);
+        notificationFooterFont.setColor(ExcelColor.TODOKEDE_FOOTER);
         notificationFooterStyle.setFont(notificationFooterFont);
         notificationFooterStyle.setAlignment(HorizontalAlignment.CENTER);
         notificationFooterStyle.setVerticalAlignment(VerticalAlignment.CENTER);
@@ -623,7 +623,7 @@ public class CreateExcel {
         styleTableHeader.setAlignment(HorizontalAlignment.CENTER);
         styleTableHeader.setVerticalAlignment(VerticalAlignment.CENTER);
         styleTableHeader.setFont(fontTableHeader);
-        styleTableHeader.setFillForegroundColor(ExcelColor.blue);
+        styleTableHeader.setFillForegroundColor(ExcelColor.REPORT_BLUE);
         styleTableHeader.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         cell.setCellStyle(styleTableHeader);
         cell = row.getCell(1);
@@ -654,7 +654,7 @@ public class CreateExcel {
         // 平日のスタイル
         XSSFCellStyle styleWeekDay = wb.createCellStyle();
         styleWeekDay.setAlignment(HorizontalAlignment.CENTER);
-        styleWeekDay.setFillForegroundColor(ExcelColor.blue);
+        styleWeekDay.setFillForegroundColor(ExcelColor.REPORT_BLUE);
         styleWeekDay.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         Font fontWeekDay = wb.createFont();
         fontWeekDay.setFontName(PMINCHO);
@@ -663,7 +663,7 @@ public class CreateExcel {
         // 平日以外のスタイル
         XSSFCellStyle styleWeekEnd = wb.createCellStyle();
         styleWeekEnd.setAlignment(HorizontalAlignment.CENTER);
-        styleWeekEnd.setFillForegroundColor(ExcelColor.blue);
+        styleWeekEnd.setFillForegroundColor(ExcelColor.REPORT_BLUE);
         styleWeekEnd.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         Font fontWeekEnd = wb.createFont();
         fontWeekEnd.setColor(IndexedColors.RED.index);
@@ -673,7 +673,7 @@ public class CreateExcel {
         // 右３列のスタイル
         XSSFCellStyle styleThreeRightColumn = wb.createCellStyle();
         styleThreeRightColumn.setAlignment(HorizontalAlignment.CENTER);
-        styleThreeRightColumn.setFillForegroundColor(ExcelColor.yellow);
+        styleThreeRightColumn.setFillForegroundColor(ExcelColor.REPORT_YELLOW);
         styleThreeRightColumn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         styleThreeRightColumn.setFont(fontWeekDay); // フォントは平日と同じ
 

@@ -11,32 +11,96 @@ import lombok.Data;
 
 @Data
 public class ExcelCellStyle {
+    
     private XSSFWorkbook wb;
     
-    // セルスタイルテンプレート
-    // 枠線、水平・垂直位置センタリング
-    private XSSFCellStyle centeredThinBorderStyle;
-    // 薄い枠線でスタイルを初期化
+    // フォント名定義
+    final String CENTURY = "century"; // 数字用フォント
+    final String PMINCHO = "ＭＳ Ｐ明朝"; // 文字用フォント
 
 
+    /**
+     * CellStyleテンプレート
+     * 枠線： 四方
+     * センタリング： 水平・垂直
+     */
+    public XSSFCellStyle centeredThinBorderStyle;
 
+    //////////////////////////
+    // 「届出」シートのスタイル
+    //////////////////////////
 
-    // 「届出」シート
-    // 社員テーブルのセルスタイル
-    private XSSFCellStyle notificationEmployeeInfoTable;
-    private XSSFCellStyle notificationTableHeaderNorm;
-    private XSSFCellStyle notificationTableHeaderLeftDash;
-    private XSSFCellStyle notificationTableHeaderRightDash;
-    private XSSFCellStyle styleNotificationTitleYear;
-    private XSSFCellStyle notificationFooterStyle;
+    /**
+     * 社員テーブル
+     */
+    public XSSFCellStyle notificationEmployeeInfoTable;
 
-    private XSSFFont notificationEmployeeInfoTableFont;
-    private XSSFFont notificationTableHeaderNormFont;
-    private XSSFFont notificationTableHeaderLeftDashFont;
-    private XSSFFont notificationTableHeaderRightDashFont;
-    private XSSFFont styleNotificationTitleYearFont;
-    private XSSFFont notificationFooterFont;
-    private XSSFFont fontNotificationTitleYear;
+    /**
+     * テーブルヘッダーノーマル
+     */
+    public XSSFCellStyle notificationTableHeaderNorm;
+
+    /**
+     * 届出シートのテーブルヘッダー
+     * 左破線
+     */
+    public XSSFCellStyle notificationTableHeaderLeftDash;
+
+    /**
+     * 届出シートのテーブルヘッダー
+     * 右破線
+     */
+    public XSSFCellStyle notificationTableHeaderRightDash;
+
+    /**
+     * 届出シートの年度タイトル
+     */
+    public XSSFCellStyle notificationTitleYear;
+
+    /**
+     * 届出シートのフッタースタイル
+     */
+    public XSSFCellStyle notificationFooterStyle;
+
+    //////////////////////
+    // 「届出」シートのフォント
+    //////////////////////
+
+    /**
+     * Fontのテンプレート
+     * フォント名：MS P明朝
+     */
+    public XSSFFont centeredThinBorderFont;
+
+    /**
+     * 届出シートの社員情報フォント
+     */
+    public XSSFFont notificationEmployeeInfoTableFont;     // 社員情報のフォント
+
+    /**
+     * 届出シートのテーブルノーマルフォント
+     */
+    public XSSFFont notificationTableHeaderNormFont;       // テーブルノーマルフォント
+
+    /**
+     * 届出シートのテーブル左破線フォント
+     */
+    public XSSFFont notificationTableHeaderLeftDashFont;   // テーブル左破線フォント
+
+    /**
+     * 届出シートのテーブル右破線フォント
+     */
+    public XSSFFont notificationTableHeaderRightDashFont;  // テーブル右破線フォント
+
+    /**
+     * 届出シートの年度タイトルフォント
+     */
+    public XSSFFont notificationTitleYearFont;             // 年度タイトルフォント
+
+    /**
+     * 届出シートのフッターフォント
+     */
+    public XSSFFont notificationFooterFont;                // フッターフォント
 
     /**
      * コンストラクタ
@@ -44,68 +108,72 @@ public class ExcelCellStyle {
     public ExcelCellStyle(XSSFWorkbook wb){
         // ワークブック
         this.wb = wb;
-        // セルスタイル様式の初期化
-        centeredThinBorderStyle = wb.createCellStyle();
-        centeredThinBorderStyle.setAlignment(HorizontalAlignment.CENTER);
-        centeredThinBorderStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        centeredThinBorderStyle.setBorderBottom(BorderStyle.THIN);
-        centeredThinBorderStyle.setBorderTop(BorderStyle.THIN);
-        centeredThinBorderStyle.setBorderLeft(BorderStyle.THIN);
-        centeredThinBorderStyle.setBorderRight(BorderStyle.THIN);
-        // 「届出」
-        // セルスタイルの作成
-        notificationEmployeeInfoTable = wb.createCellStyle();
-        notificationEmployeeInfoTable.cloneStyleFrom(centeredThinBorderStyle);
-        notificationTableHeaderNorm = wb.createCellStyle();
-        notificationTableHeaderNorm.cloneStyleFrom(centeredThinBorderStyle);
-        notificationTableHeaderLeftDash = wb.createCellStyle();
-        notificationTableHeaderLeftDash.cloneStyleFrom(centeredThinBorderStyle);
-        notificationTableHeaderRightDash = wb.createCellStyle();
-        notificationTableHeaderRightDash.cloneStyleFrom(centeredThinBorderStyle);
-        notificationFooterStyle = wb.createCellStyle();
-        notificationFooterStyle.cloneStyleFrom(centeredThinBorderStyle);
-        // YYYY年度 届出タイトル部分のスタイル
-        styleNotificationTitleYear = wb.createCellStyle();
-        fontNotificationTitleYear.setBold(true);
-        fontNotificationTitleYear.setFontHeightInPoints((short)16);;
-        fontNotificationTitleYear.setFontName("ＭＳ Ｐ明朝");
-
-        // フォントの作成
-        notificationEmployeeInfoTableFont      = wb.createFont();
-        notificationTableHeaderNormFont        = wb.createFont();
-        notificationTableHeaderLeftDashFont    = wb.createFont();
-        notificationTableHeaderRightDashFont   = wb.createFont();
-        styleNotificationTitleYearFont         = wb.createFont();
-        notificationFooterFont                 = wb.createFont();
-        fontNotificationTitleYear              = wb.createFont();
-
-        // フォントの設定をセット
-        notificationEmployeeInfoTableFont.setFontName("ＭＳ ゴシック");;
-        notificationTableHeaderNormFont.setBold(true);
-        notificationTableHeaderNormFont.setFontName("ＭＳ Ｐゴシック");
-        // notificationTableHeaderLeftDashFont.;
-        // notificationTableHeaderRightDashFont;
-        // styleNotificationTitleYearFont      ;
-        notificationFooterFont.setFontName("Century");
-        notificationFooterFont.setFontHeightInPoints((short)16);
-        notificationFooterFont.setBold(true);
-        notificationFooterFont.setColor(ExcelColor.footer);
-
-        fontNotificationTitleYear.setBold(true);
-        fontNotificationTitleYear.setFontHeightInPoints((short)16);;
-        fontNotificationTitleYear.setFontName("ＭＳ Ｐ明朝");
-        styleNotificationTitleYear.setFont(fontNotificationTitleYear);
+        // 初期化
+        this.init();
+    }
 
 
+    /**
+     * 初期化処理
+     */
+    private void init(){
+                // テンプレートスタイル作成
+                centeredThinBorderStyle = wb.createCellStyle();
+                centeredThinBorderStyle.setAlignment(HorizontalAlignment.CENTER);
+                centeredThinBorderStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+                centeredThinBorderStyle.setBorderTop(BorderStyle.THIN);
+                centeredThinBorderStyle.setBorderLeft(BorderStyle.THIN);
+                centeredThinBorderStyle.setBorderRight(BorderStyle.THIN);
+                centeredThinBorderStyle.setBorderBottom(BorderStyle.THIN);
+                // テンプレートフォント作成
+                centeredThinBorderFont.setFontName(PMINCHO);
+                centeredThinBorderStyle.setFont(centeredThinBorderFont);
 
-        // セルスタイルにフォント設定をセット
-        // notificationEmployeeInfoTable;   
-        // notificationTableHeaderNorm     
-        // notificationTableHeaderLeftDash 
-        // notificationTableHeaderRightDash
-        // styleNotificationTitleYear      
-        notificationFooterStyle.setFillForegroundColor(ExcelColor.footer);         
 
+                // 「届出」
+                // セルスタイルの作成
+                // notificationEmployeeInfoTable = wb.createCellStyle();
+                notificationEmployeeInfoTable.cloneStyleFrom(centeredThinBorderStyle);
+                // notificationTableHeaderNorm = wb.createCellStyle();
+                notificationTableHeaderNorm.cloneStyleFrom(centeredThinBorderStyle);
+                // notificationTableHeaderLeftDash = wb.createCellStyle();
+                notificationTableHeaderLeftDash.cloneStyleFrom(centeredThinBorderStyle);
+                // notificationTableHeaderRightDash = wb.createCellStyle();
+                notificationTableHeaderRightDash.cloneStyleFrom(centeredThinBorderStyle);
+                // notificationFooterStyle = wb.createCellStyle();
+                notificationFooterStyle.cloneStyleFrom(centeredThinBorderStyle);
+                // YYYY年度 届出タイトル部分のスタイル
+                notificationTitleYear = wb.createCellStyle();
+                // notificationTitleYearFont.setFontName(PMINCHO);
+        
 
+                /**
+                 * 届出シートのフォント作成
+                 */
+                notificationEmployeeInfoTableFont      = new XSSFFont();
+                notificationTableHeaderNormFont        = new XSSFFont();
+                notificationTableHeaderLeftDashFont    = new XSSFFont();
+                notificationTableHeaderRightDashFont   = new XSSFFont();
+                notificationTitleYearFont              = new XSSFFont();
+                notificationFooterFont                 = new XSSFFont();
+                // 社員テーブル
+                notificationEmployeeInfoTableFont.setFontName(PMINCHO);;
+                notificationEmployeeInfoTable.setFont(notificationEmployeeInfoTableFont);
+                // ヘッダーノーマル
+                notificationTableHeaderNormFont.setBold(true);
+                notificationTableHeaderNormFont.setFontName(PMINCHO);
+                notificationTableHeaderNorm.setFont(notificationTableHeaderNormFont);
+                // 年度
+                notificationTitleYearFont.setBold(true);
+                notificationTitleYearFont.setFontName(PMINCHO);
+                notificationTitleYearFont.setFontHeightInPoints((short)16);;
+                notificationTitleYear.setFont(notificationTitleYearFont);
+                // フッター
+                notificationFooterFont.setBold(true);
+                notificationFooterFont.setFontName(PMINCHO);
+                notificationFooterFont.setFontHeightInPoints((short)16);
+                notificationFooterFont.setColor(ExcelColor.TODOKEDE_FOOTER);
+                notificationFooterStyle.setFont(notificationFooterFont);
+        
     }
 }
