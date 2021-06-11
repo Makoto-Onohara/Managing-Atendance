@@ -1,5 +1,8 @@
 package com.example.common;
 
+/**
+ * ［届出］シートの高さ
+ */
 public class TodokedeHeight {
     public static final short[] todokedeHeight = {
         495, 264, 264, 750, 264,    // 1行目から5行目

@@ -18,21 +18,25 @@ public class GetW {
         
         String tempFilename = "勤怠報告書（2020年度_大野原信）1.xlsm";
         
-        Path dir = Path.of("C:/Users/yumasky/Desktop/work/VScode/managing-atendance/apachepoi/");
+        Path dir = Path.of("C:/Users/yumasky/Desktop/work/VScode/managing-atendance/apachepoi/output/");
         File file = new File(dir.toFile(), tempFilename);
         FileInputStream is = null;
         try {
             is = new FileInputStream(file);
             XSSFWorkbook wb = (XSSFWorkbook)WorkbookFactory.create(is);
-            XSSFSheet todokedeSheet = wb.getSheet("届出");
+            // XSSFSheet todokedeSheet = wb.getSheet("届出");
+            XSSFSheet todokedeSheet = wb.getSheet("振替出勤管理表");
 
             System.out.println("********幅を取得********");
             for(int i = 0; i < 17; i++){
-                System.out.println((i+1) +"列目の幅: " + todokedeSheet.getColumnWidth(i));
+                // System.out.println((i+1) +"列目の幅: " + todokedeSheet.getColumnWidth(i));
+                System.out.println(todokedeSheet.getColumnWidth(i));
             }
             System.out.println("********高さを取得********");
-            for(int i = 0; i < 48; i++){
-                System.out.println((i+1) +"行目の高さ: " + todokedeSheet.getRow(i).getHeight());
+            // for(int i = 0; i < 48; i++){
+            for(int i = 0; i < 53; i++){
+                // System.out.println((i+1) +"行目の高さ: " + todokedeSheet.getRow(i).getHeight());
+                System.out.println(todokedeSheet.getRow(i).getHeight());
             }
 
         } catch (IOException e) {
