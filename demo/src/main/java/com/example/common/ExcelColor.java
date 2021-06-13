@@ -30,6 +30,9 @@ public final class ExcelColor {
     /**
      * 「振替出勤管理表」シートの色管理
      */
+    // ヘッダー白文字
+    public static final byte[] furikaeWhite = new byte[]{(byte)255, (byte)255, (byte)255};
+    public static final XSSFColor FURIKAE_WHITE = new XSSFColor(furikaeWhite, new DefaultIndexedColorMap());
     // ヘッダー「振替出勤」
     public static final byte[] furikaePink = new byte[]{(byte)255, (byte)0, (byte)255};
     public static final XSSFColor FURIKAE_PINK = new XSSFColor(furikaePink, new DefaultIndexedColorMap());
@@ -38,6 +41,7 @@ public final class ExcelColor {
     public static final XSSFColor FURIKAE_BLUE = new XSSFColor(furikaeBlue, new DefaultIndexedColorMap());
     // ヘッダー２列目の薄い青（届出シートの青と同じ）
     public static final XSSFColor FURIKAE_LIGHT_BLUE = BLUE_NOTE;
+
     
 
 

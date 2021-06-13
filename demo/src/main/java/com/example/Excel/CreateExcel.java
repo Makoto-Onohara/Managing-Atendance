@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.sql.Date;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,9 @@ import org.apache.poi.xssf.usermodel.XSSFTextBox;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class CreateExcel {
+    // 何年度のエクセル
+    Integer year = 2021;
+
     // フォント名定義
     String CENTURY = "century"; // 数字用フォント
     String PMINCHO = "ＭＳ Ｐ明朝"; // 文字用フォント
@@ -57,7 +62,7 @@ public class CreateExcel {
     // エクセルを保存するディレクトリ
     Path dir = Path.of("C:/Users/yumasky/Desktop/work/VScode/managing-atendance/apachepoi/output/");
     // define a file name
-    File file = new File(dir.toFile(), "勤怠報告書（2021年度_" + nameforsheet + "）.xlsx");
+    File file = new File(dir.toFile(), "勤怠報告書（" + year +"年度_" + nameforsheet + "）.xlsx");
 
     FileOutputStream fos = null;
 
@@ -70,6 +75,16 @@ public class CreateExcel {
     List<XSSFSheet> sheetList;
     XSSFRow row = null;
     XSSFCell cell = null;
+
+    XSSFCellStyle notificationEmployeeInfoTable;
+    XSSFCellStyle notificationTableHeaderNorm;
+    XSSFCellStyle notificationTableHeaderLeftDash;
+    XSSFCellStyle notificationTableHeaderRightDash;
+    XSSFCellStyle notificationTableHeaderBothDash;
+    XSSFCellStyle notificationTableNorm;
+    XSSFCellStyle notificationTableLeftDash;
+    XSSFCellStyle notificationTableRightDash;
+    XSSFCellStyle notificationTableBothDash;
     
     /**
      * エクセルの作成
@@ -116,22 +131,24 @@ public class CreateExcel {
         sheetList.add(wb.createSheet("届出"));
         // 振替出勤管理表シート作成
         sheetList.add(wb.createSheet("振替出勤管理表"));
-        // 報告書シート作成
-        sheetList.add(wb.createSheet("5月"));
+        // // 報告書シート作成
+        // sheetList.add(wb.createSheet("5月"));
     }
 
 
     /**
      * 届出シート作成する
      */
-    void createTodokede() {
+
+    private void createTodokede() {
+        
         // 届出シートを取得
         XSSFSheet sheetNotification = sheetList.get(0);
         
 
         // シート［届出」のセルスタイル
         // 社員情報のスタイル
-        XSSFCellStyle notificationEmployeeInfoTable = wb.createCellStyle();
+        notificationEmployeeInfoTable = wb.createCellStyle();
         notificationEmployeeInfoTable.setAlignment(HorizontalAlignment.CENTER);
         notificationEmployeeInfoTable.setVerticalAlignment(VerticalAlignment.CENTER);
         notificationEmployeeInfoTable.setBorderBottom(BorderStyle.THIN);
@@ -142,7 +159,7 @@ public class CreateExcel {
         notificationEmployeeInfoTableFont.setFontName(PMINCHO);
         notificationEmployeeInfoTable.setFont(notificationEmployeeInfoTableFont);
         // ヘッダー部分のノーマルスタイル
-        XSSFCellStyle notificationTableHeaderNorm = wb.createCellStyle();
+        notificationTableHeaderNorm = wb.createCellStyle();
         XSSFFont notificationTableHeaderNormFont = wb.createFont();
         notificationTableHeaderNorm.cloneStyleFrom(notificationEmployeeInfoTable);
         notificationTableHeaderNorm.setFillForegroundColor(ExcelColor.BLUE_NOTE);
@@ -151,30 +168,30 @@ public class CreateExcel {
         notificationTableHeaderNormFont.setFontName(PMINCHO);
         notificationTableHeaderNorm.setFont(notificationTableHeaderNormFont);
         // ヘッダー部分の左破線
-        XSSFCellStyle notificationTableHeaderLeftDash = wb.createCellStyle();
+        notificationTableHeaderLeftDash = wb.createCellStyle();
         notificationTableHeaderLeftDash.cloneStyleFrom(notificationTableHeaderNorm);
         notificationTableHeaderLeftDash.setBorderLeft(BorderStyle.DASHED);
         // ヘッダー部分の右破線
-        XSSFCellStyle notificationTableHeaderRightDash = wb.createCellStyle();
+        notificationTableHeaderRightDash = wb.createCellStyle();
         notificationTableHeaderRightDash.cloneStyleFrom(notificationTableHeaderNorm);
         notificationTableHeaderRightDash.setBorderRight(BorderStyle.DASHED);
         // ヘッダー部分の両側破線
-        XSSFCellStyle notificationTableHeaderBothDash = wb.createCellStyle();
+        notificationTableHeaderBothDash = wb.createCellStyle();
         notificationTableHeaderBothDash.cloneStyleFrom(notificationTableHeaderNorm);
         notificationTableHeaderBothDash.setBorderLeft(BorderStyle.DASHED);
         notificationTableHeaderBothDash.setBorderRight(BorderStyle.DASHED);
-        XSSFCellStyle notificationTableNorm = wb.createCellStyle();
+        notificationTableNorm = wb.createCellStyle();
         notificationTableNorm.cloneStyleFrom(notificationEmployeeInfoTable);
         // ヘッダー以外の左破線
-        XSSFCellStyle notificationTableLeftDash = wb.createCellStyle();
+        notificationTableLeftDash = wb.createCellStyle();
         notificationTableLeftDash.cloneStyleFrom(notificationTableHeaderLeftDash);
         notificationTableLeftDash.setFillPattern(FillPatternType.NO_FILL);
         // ヘッダー以外の右破線
-        XSSFCellStyle notificationTableRightDash = wb.createCellStyle();
+        notificationTableRightDash = wb.createCellStyle();
         notificationTableRightDash.cloneStyleFrom(notificationTableHeaderRightDash);
         notificationTableRightDash.setFillPattern(FillPatternType.NO_FILL);
         // ヘッダー以外の両側破線
-        XSSFCellStyle notificationTableBothDash = wb.createCellStyle();
+        notificationTableBothDash = wb.createCellStyle();
         notificationTableBothDash.cloneStyleFrom(notificationTableHeaderBothDash);
         notificationTableBothDash.setFillPattern(FillPatternType.NO_FILL);
         // セルの結合
@@ -408,10 +425,24 @@ public class CreateExcel {
 
     }
 
+
+
     /**
      * 「振替出勤管理表」シート作成
      */
+
     void createFurikae(){
+
+        // テーブルヘッダー１行目の文字列
+        String[] headerStrings = {
+            "振替出勤", "", "", "", "", "", 
+            "振替休日", "", "", "", "",
+        };
+        // テーブルヘッダー２行目の文字列
+        String[] headerStrings2 = {
+            "月", "日", "曜日", "時間", "備考(事由等)", "",
+            "月", "日", "曜日", "日数", "状況"
+        };
         // XSSFSheet sheet = sheetList.get(2);
         XSSFSheet sheetFurikae = sheetList.get(1);
         XSSFCellStyle styleNotificationTitleYear = wb.createCellStyle();
@@ -422,6 +453,42 @@ public class CreateExcel {
         styleNotificationTitleYear.setFont(fontNotificationTitleYear);
         styleNotificationTitleYear.setVerticalAlignment(VerticalAlignment.CENTER);
 
+        XSSFCellStyle employTableStyle = wb.createCellStyle();
+        employTableStyle.setAlignment(HorizontalAlignment.CENTER);
+        employTableStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        employTableStyle.setBorderBottom(BorderStyle.THIN);
+        employTableStyle.setBorderTop(BorderStyle.THIN);
+        employTableStyle.setBorderLeft(BorderStyle.THIN);
+        employTableStyle.setBorderRight(BorderStyle.THIN);
+        XSSFFont employTableFont = wb.createFont();
+        employTableFont.setFontName(PMINCHO);
+        employTableStyle.setFont(employTableFont);
+
+        XSSFCellStyle furikaeHeader1 = wb.createCellStyle();
+        furikaeHeader1.cloneStyleFrom(notificationEmployeeInfoTable);
+        furikaeHeader1.setAlignment(HorizontalAlignment.CENTER);
+        furikaeHeader1.setVerticalAlignment(VerticalAlignment.CENTER);
+        furikaeHeader1.setFillForegroundColor(ExcelColor.FURIKAE_PINK);
+        furikaeHeader1.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        XSSFFont furikaeHeader1Font = wb.createFont();
+        furikaeHeader1Font.setFontName(PMINCHO);
+        furikaeHeader1Font.setColor(ExcelColor.FURIKAE_WHITE);
+        furikaeHeader1Font.setBold(true);
+        furikaeHeader1.setFont(furikaeHeader1Font);
+        
+        XSSFCellStyle furikaeHeader2 = wb.createCellStyle();
+        furikaeHeader2.cloneStyleFrom(notificationEmployeeInfoTable);
+        furikaeHeader2.setAlignment(HorizontalAlignment.CENTER);
+        furikaeHeader2.setVerticalAlignment(VerticalAlignment.CENTER);
+        furikaeHeader2.setFillForegroundColor(ExcelColor.FURIKAE_BLUE);
+        furikaeHeader2.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        XSSFFont furikaeHeader2Font = wb.createFont();
+        furikaeHeader1Font.setFontName(PMINCHO);
+        furikaeHeader2Font.setColor(ExcelColor.FURIKAE_WHITE);
+        furikaeHeader2Font.setBold(true);
+        furikaeHeader2.setFont(furikaeHeader2Font);
+
+
         // セル結合する
         sheetFurikae.addMergedRegion(new CellRangeAddress(0, 0, 0, 5));
         sheetFurikae.addMergedRegion(new CellRangeAddress(2, 2, 0, 1));
@@ -430,6 +497,7 @@ public class CreateExcel {
         sheetFurikae.addMergedRegion(new CellRangeAddress(3, 3, 2, 4));
         sheetFurikae.addMergedRegion(new CellRangeAddress(5, 5, 0, 5));
         sheetFurikae.addMergedRegion(new CellRangeAddress(5, 5, 6, 10));
+        sheetFurikae.addMergedRegion(new CellRangeAddress(6, 6, 4, 5));
         for (int i = 7; i < 52; i++) {
             sheetFurikae.addMergedRegion(new CellRangeAddress(i, i, 4, 5));
         }
@@ -448,79 +516,130 @@ public class CreateExcel {
         cell = sheetFurikae.getRow(0).createCell(0);
         cell.setCellValue("2021年度振替出勤管理表");
         cell.setCellStyle(styleNotificationTitleYear);
+
+        // 社員テーブル
+        for(int i = 2; i < 4; i++){
+            row = sheetFurikae.getRow(i);
+            for(int j = 0; j < 5; j++){
+                cell = row.createCell(j);
+                cell.setCellStyle(notificationEmployeeInfoTable);
+                if(i == 2){
+                    if(j == 0) cell.setCellValue("社員番号");
+                    if(j == 2) cell.setCellValue("氏名");
+                }
+                if(i == 3){
+                    if(j == 0) cell.setCellValue(employeeCode);
+                    if(j == 2) cell.setCellValue(name);
+                }
+            }
+        }
+
+        // 振替テーブル
+        // ヘッダー１行目
+        row = sheetFurikae.getRow(5);
+        for(int i = 0; i < 11; i++){
+            cell = row.createCell(i);
+            cell.setCellValue(headerStrings[i]);
+            if( i < 5){
+                cell.setCellStyle(furikaeHeader1);
+            } else {
+                cell.setCellStyle(furikaeHeader2);
+            }
+
+           
+        }
+        // ヘッダー２行目
+        row = sheetFurikae.getRow(6);
+        for(int i = 0; i < 11; i++){
+            cell = row.createCell(i);
+            cell.setCellValue(headerStrings2[i]);
+            switch(i) {
+                // 右破線
+                case 0: case 6:
+                    cell.setCellStyle(notificationTableHeaderRightDash);
+                    break;
+                // 左破線
+                case 5: case 10:
+                    cell.setCellStyle(notificationTableHeaderLeftDash);
+                    break;
+                // 両破線
+                default:
+                    cell.setCellStyle(notificationTableHeaderBothDash);
+                    break;
+            }
+
+        }
+        // 入力テーブル
+        for(int i = 7; i < 52; i++){
+            row = sheetFurikae.getRow(i);
+            for(int j = 0; j < 11; j++){
+                cell = row.createCell(j);
+                switch(j) {
+                    case 0: case 6:
+                        cell.setCellStyle(notificationTableRightDash);
+                        break;
+                    case 5: case 10:
+                        cell.setCellStyle(notificationTableLeftDash);
+                        break;
+                    default:
+                        cell.setCellStyle(notificationTableBothDash);
+                        break;
+                }
+            }
+        }
+
+        // 凡例テーブル
+        for(int i = 5; i < 13; i++){
+            row = sheetFurikae.getRow(i);
+            for(int j = 13; j < 16; j++){
+                cell = row.createCell(j);
+
+
+            }
+        }
+
+        // フッター部分(53行目)
+        row = sheetFurikae.getRow(52);
+        cell = row.createCell(0);
+        cell.setCellValue("MicroMagic INC.");
+        XSSFCellStyle notificationFooterStyle = wb.createCellStyle();
+        notificationFooterStyle.setAlignment(HorizontalAlignment.CENTER);
+        notificationFooterStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        XSSFFont notificationFooterFont = wb.createFont();
+        notificationFooterFont.setFontName(CENTURY);
+        notificationFooterFont.setFontHeightInPoints((short) 16);
+        notificationFooterFont.setBold(true);
+        notificationFooterFont.setColor(ExcelColor.TODOKEDE_FOOTER);
+        notificationFooterStyle.setFont(notificationFooterFont);
+        // notificationFooterStyle.setFillForegroundColor(new XSSFColor(footerRGB, new
+        // DefaultIndexedColorMap()));
+        cell.setCellStyle(notificationFooterStyle);
+
+
+
+
     }
 
 
     /**
      * 月ごとのシート作成
      */
-    void createMonthly(){
-        XSSFSheet sheet = sheetList.get(2);
+    void createMonthly() {
 
-        for (int i = 0; i < rowSize; i++) {
-            row = sheet.createRow(i);
-            for (int j = 0; j < colSize; j++) {
-                row.createCell(j);
-            }
-        }
-        // XSSFCell cell = row.createCell(0);
+        /**
+         * テーブルヘッダー文言
+         */
+        String[] tableHeaderStrings = { 
+            "日付", "", "作業項目", "備考", 
+            "開始時間", "終了時間", "全時間", "作業時間", "残業時間" };
 
-        // 結合する相手のセルは作成していなくても例外は発生しない
-        // XSSFCell cell1 = row.createCell(1);
-        // XSSFCell cell2 = row.createCell(2);
+        //////////////////////////
+        // スタイルの定義
+        //////////////////////////
 
-        // 「YYYY年M月分」
-        sheet.getRow(0).getCell(0).setCellValue("2021年5月分");
-        // merge cells of 年月
-        // 引数の番号は0基底
-        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 2));
-
-        // フォントの設定は一括で行い、セルに対してセットする
-        // セルごとにフォントをセットしないといけない？
-        Font font = wb.createFont();
-        font.setBold(true);
-        font.setFontName(PMINCHO);
-        // font.setUnderline(Font.U_SINGLE);
-        font.setFontHeightInPoints((short) 16);
-
-        // CellStyle はセルごとにインスタンスを生成する必要がある
-        CellStyle style = wb.createCellStyle();
-        style.setFont(font);
-        style.setVerticalAlignment(VerticalAlignment.CENTER);
-        ;
-        row = sheet.getRow(0);
-        cell = row.getCell(0);
-        cell.setCellStyle(style);
-
-        // 「勤怠報告書」
-        CellStyle style2 = wb.createCellStyle();
-        style2.setVerticalAlignment(VerticalAlignment.CENTER);
-        ;
-        cell = row.createCell(3);
-        cell.setCellValue("勤怠報告書");
-        Font font2 = wb.createFont();
-        font2.setBold(true);
-        font2.setFontHeightInPoints((short) 20);
-        font2.setFontName(PMINCHO);
-        style2.setFont(font2);
-        cell.setCellStyle(style2);
-
-        // 会社名の設定
-        cell = row.createCell(7);
-        cell.setCellValue("株式会社マイクロマジック");
-        CellStyle style3 = wb.createCellStyle();
-        Font font3 = wb.createFont();
-        font3.setFontHeightInPoints((short) 10);
-        font3.setFontName(PMINCHO);
-        style3.setFont(font3);
-        style3.setVerticalAlignment(VerticalAlignment.CENTER);
-        ;
-        cell.setCellStyle(style3);
-
-        // 「開始」
-        row = sheet.getRow(1);
-        cell = row.createCell(1);
-        cell.setCellValue("開始");
+        /**
+         * 「開始」「締日」スタイル
+         */
         CellStyle style4 = wb.createCellStyle();
         Font font4 = wb.createFont();
         font4.setFontHeightInPoints((short) 9);
@@ -528,10 +647,10 @@ public class CreateExcel {
         style4.setFont(font4);
         style4.setVerticalAlignment(VerticalAlignment.CENTER);
         style4.setAlignment(HorizontalAlignment.CENTER);
-        cell.setCellStyle(style4);
-        // 「YYYY年M月D日」
-        cell = row.getCell(2);
-        cell.setCellValue("2021年5月1日");
+
+        /**
+         * 開始日・締日フィールドスタイル
+         */
         CellStyle style4_2 = wb.createCellStyle();
         Font font4_2 = wb.createFont();
         font4_2.setBold(true);
@@ -540,22 +659,42 @@ public class CreateExcel {
         font4_2.setFontHeightInPoints((short) 9);
         style4_2.setFont(font4_2);
         style4_2.setVerticalAlignment(VerticalAlignment.CENTER);
-        cell.setCellStyle(style4_2);
 
-        // 「締日」
-        row = sheet.getRow(2);
-        cell = row.createCell(1);
-        cell.setCellValue("締日");
-        cell.setCellStyle(style4);
-        // 「YYYY年M月D日」
-        cell = row.getCell(2);
-        cell.setCellValue("2021年5月31日");
-        cell.setCellStyle(style4_2);
+        /**
+         * 会社名スタイル
+         */
+        CellStyle style3 = wb.createCellStyle();
+        Font font3 = wb.createFont();
+        font3.setFontHeightInPoints((short) 10);
+        font3.setFontName(PMINCHO);
+        style3.setFont(font3);
+        style3.setVerticalAlignment(VerticalAlignment.CENTER);
 
-        // 「社員番号」
-        row = sheet.getRow(3);
-        cell = row.createCell(1);
-        cell.setCellValue("社員番号");
+        /**
+         * 「勤怠報告書」スタイル
+         */
+        CellStyle style2 = wb.createCellStyle();
+        style2.setVerticalAlignment(VerticalAlignment.CENTER);
+        Font font2 = wb.createFont();
+        font2.setBold(true);
+        font2.setFontHeightInPoints((short) 20);
+        font2.setFontName(PMINCHO);
+        style2.setFont(font2);
+
+        /**
+         * YYYY年MM月分スタイル
+         */
+        CellStyle style = wb.createCellStyle();
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        Font font = wb.createFont();
+        font.setBold(true);
+        font.setFontName(PMINCHO);
+        font.setFontHeightInPoints((short) 16);
+        style.setFont(font);
+
+        /**
+         * 社員テーブルのスタイル
+         */
         CellStyle style5 = wb.createCellStyle();
         Font font5 = wb.createFont();
         font5.setFontHeightInPoints((short) 9);
@@ -567,91 +706,19 @@ public class CreateExcel {
         style5.setBorderTop(BorderStyle.THIN);
         style5.setBorderLeft(BorderStyle.THIN);
         style5.setBorderRight(BorderStyle.THIN);
-        cell.setCellStyle(style5);
-        // 「氏名」
-        cell = row.getCell(2);
-        cell.setCellValue("氏名");
-        cell.setCellStyle(style5);
-        // 「担当」
-        cell = row.getCell(7);
-        cell.setCellValue("担当");
-        cell.setCellStyle(style5);
-        // 「確認」
-        cell = row.getCell(8);
-        cell.setCellValue("確認");
-        cell.setCellStyle(style5);
 
-        // 社員番号の値
-        row = sheet.getRow(4);
-        cell = row.createCell(1);
-        cell.setCellValue("00249");
-        // セルスタイルとフォントはstyle5,font5と共通
-        cell.setCellStyle(style5);
-        // 氏名の値
-        cell = row.getCell(2);
-        cell.setCellValue("大野原　信");
-        cell.setCellStyle(style5);
-        // 担当欄
-        cell = row.getCell(7);
-        cell.setCellStyle(style5);
-        // 確認欄
-        cell = row.getCell(8);
-        cell.setCellStyle(style5);
-
-        // 「提出日」
-        row = sheet.getRow(5);
-        cell = row.createCell(6);
-        cell.setCellValue("提出日 2021年5月31日");
-        CellStyle style6 = wb.createCellStyle();
+        /**
+         * 提出日のスタイル
+         */
+        XSSFCellStyle style6 = wb.createCellStyle();
         style6.setAlignment(HorizontalAlignment.RIGHT);
-        cell.setCellStyle(style6);
-        sheet.addMergedRegion(new CellRangeAddress(5, 5, 6, 8));
+        XSSFFont style6Font = wb.createFont();
+        style6Font.setFontName(PMINCHO);
+        style6.setFont(style6Font);
 
-        // テーブルヘッダー
-        row = sheet.getRow(6);
-        String[] tableHeaderStrings = { "日付", "作業項目", "備考", "開始時間", "終了時間", "全時間", "作業時間", "残業時間" };
-
-        // 「日付」
-        cell = row.getCell(0);
-        cell.setCellValue(tableHeaderStrings[0]);
-        sheet.addMergedRegion(new CellRangeAddress(6, 6, 0, 1));
-        Font fontTableHeader = wb.createFont();
-        fontTableHeader.setBold(true);
-        fontTableHeader.setFontHeightInPoints((short) 9);
-        fontTableHeader.setFontName(PMINCHO);
-        XSSFCellStyle styleTableHeader = wb.createCellStyle();
-        styleTableHeader.setAlignment(HorizontalAlignment.CENTER);
-        styleTableHeader.setVerticalAlignment(VerticalAlignment.CENTER);
-        styleTableHeader.setFont(fontTableHeader);
-        styleTableHeader.setFillForegroundColor(ExcelColor.REPORT_BLUE);
-        styleTableHeader.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        cell.setCellStyle(styleTableHeader);
-        cell = row.getCell(1);
-        cell.setCellStyle(styleTableHeader);
-        // 「作業項目」「備考」「開始時間」「終了時間」「全時間」「作業時間」「残業時間」
-        for (int i = 2; i < 9; i++) {
-            cell = row.getCell(i);
-            cell.setCellValue(tableHeaderStrings[i - 1]);
-            cell.setCellStyle(styleTableHeader);
-        }
-
-        for (int i = 2; i < 9; i++) {
-            cell = row.getCell(i);
-            cell.setCellStyle(styleTableHeader);
-        }
-
-        // カレンダー作成
-        // List<XSSFCell> cellList = new ArrayList<>();
-        // XSSFCell[] cellB = null;
-        XSSFCell cellA = null;
-        XSSFCell cellB = null;
-
-        // LocalDate startDate;
-        LocalDate startDate = LocalDate.parse("2021-05-01");
-        // DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd",
-        // Locale.JAPANESE);
-        LocalDate date = null;
-        // 平日のスタイル
+        /**
+         * 平日のスタイル
+         */ 
         XSSFCellStyle styleWeekDay = wb.createCellStyle();
         styleWeekDay.setAlignment(HorizontalAlignment.CENTER);
         styleWeekDay.setFillForegroundColor(ExcelColor.REPORT_BLUE);
@@ -677,65 +744,230 @@ public class CreateExcel {
         styleThreeRightColumn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         styleThreeRightColumn.setFont(fontWeekDay); // フォントは平日と同じ
 
-        for (int i = 0; i < 31; i++) {
-            row = sheet.getRow(i + 7);
-            // for(int j = 0; j < 9; j++){
-            // // cellA = row.getCell(0);
-            // // cellB = row.getCell(1);
-            // cellList.add(row.getCell(j));
+        /**
+         * テーブルヘッダースタイル
+         */
+        XSSFCellStyle styleTableHeader = wb.createCellStyle();
+        styleTableHeader.setAlignment(HorizontalAlignment.CENTER);
+        styleTableHeader.setVerticalAlignment(VerticalAlignment.CENTER);
+        styleTableHeader.setFillForegroundColor(ExcelColor.REPORT_BLUE);
+        styleTableHeader.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        Font fontTableHeader = wb.createFont();
+        fontTableHeader.setBold(true);
+        fontTableHeader.setFontHeightInPoints((short) 9);
+        fontTableHeader.setFontName(PMINCHO);
+        styleTableHeader.setFont(fontTableHeader);
 
-            // }
-            cellA = row.getCell(0);
-            cellB = row.getCell(1);
 
-            // 右３列にスタイルを適用
-            row.getCell(6).setCellStyle(styleThreeRightColumn);
-            row.getCell(7).setCellStyle(styleThreeRightColumn);
-            row.getCell(8).setCellStyle(styleThreeRightColumn);
-
-            // 日付を埋め込む
-            // 日付のフォーマットをdとする
-            // DateTimeFormatter dtf = DateTimeFormatter.ofPattern("d");
-            // date = LocalDate.parse(startDate.toString(), dtf);
-
-            // 日付を加算する
-            date = startDate.plusDays(i);
-            cellA.setCellValue(date.getDayOfMonth());
-            // 日付を
-            cellB.setCellValue(date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.JAPANESE));
-
-            // セルスタイルのセット
-            if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
-                // 休日のスタイル
-                cellA.setCellStyle(styleWeekEnd);
-                cellB.setCellStyle(styleWeekEnd);
-            } else {
-                // 平日のスタイル
-                cellA.setCellStyle(styleWeekDay);
-                cellB.setCellStyle(styleWeekDay);
-            }
-        }
-
-        // 集計行
-        row = sheet.getRow(38);
-        XSSFCell totalCell = row.getCell(0);
-        totalCell.setCellValue("合計");
+        /**
+         * 合計のスタイル
+         */
         XSSFCellStyle styleGoukei = wb.createCellStyle();
         styleGoukei.cloneStyleFrom(styleTableHeader);
         styleGoukei.setBorderTop(BorderStyle.DOUBLE);
         styleGoukei.setBorderBottom(BorderStyle.THICK);
-        sheet.addMergedRegion(new CellRangeAddress(38, 38, 0, 1));
-        totalCell.setCellStyle(styleGoukei);
-        row.getCell(1).setCellStyle(styleGoukei);
-
+        // 端以外の合計行のスタイル
         XSSFCellStyle styleTotalNotEdge = wb.createCellStyle();
         styleTotalNotEdge.cloneStyleFrom(styleGoukei);
-        // styleTotalNotEdge.setBorderTop(BorderStyle.DOUBLE);
-        // styleTotalNotEdge.setBorderBottom(BorderStyle.THICK);
 
-        for (int i = 2; i < 9; i++) {
-            row.getCell(i).setCellStyle(styleTotalNotEdge);
+
+        ////////////////////////
+        // １年分のシートを作成
+        ////////////////////////
+
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy年M日d日");
+        // スタート日付を４月１日とする
+        LocalDate startYearDate = LocalDate.of(year, 4, 1);
+
+        // １年分のシートを作成
+        for(int i = 0; i < 12; i++) {
+            LocalDate startDate = startYearDate.plusMonths(i);
+            int month = startDate.getMonthValue();
+            int date = startDate.getDayOfMonth();
+            sheetList.add(wb.createSheet(month + "月"));
         }
+        
+
+        /////////////////////
+        // 以下１シート分
+        // できればメソッド化して共通化したい
+        /////////////////////
+
+        XSSFSheet sheet;
+
+        
+        for(int j = 1; j <= 12; j++){
+            LocalDate startDate = startYearDate.plusMonths(j);
+            sheet = wb.getSheet(j + "月");
+            // セル結合している部分は最初に結合する
+            // sheet.getRow(0).getCell(0).setCellValue("2021年" + j + "月分");
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 2));
+            sheet.addMergedRegion(new CellRangeAddress(5, 5, 6, 8));
+            sheet.addMergedRegion(new CellRangeAddress(6, 6, 0, 1));
+            sheet.addMergedRegion(new CellRangeAddress(38, 38, 0, 1));
+
+            // 列幅を設定する
+            for(int i = 0; i < )
+            // sheet = wb.getSheet("4月");
+            // 「YYYY年M月分」
+            // merge cells of 年月
+            // 引数の番号は0基底
+    
+            // フォントの設定は一括で行い、セルに対してセットする
+            // セルごとにフォントをセットしないといけない？
+            
+            // CellStyle はセルごとにインスタンスを生成する必要がある
+            row = sheet.createRow(0);
+            cell = row.createCell(0);
+            cell.setCellStyle(style);
+    
+            // 「勤怠報告書」
+            cell = row.createCell(3);
+            cell.setCellValue("勤怠報告書");
+            cell.setCellStyle(style2);
+    
+            // 会社名の設定
+            cell = row.createCell(7);
+            cell.setCellValue("株式会社マイクロマジック");
+    
+            cell.setCellStyle(style3);
+    
+            // 「開始」
+            row = sheet.createRow(1);
+            cell = row.createCell(1);
+            cell.setCellValue("開始");
+    
+            cell.setCellStyle(style4);
+            // 「YYYY年M月D日」
+            cell = row.createCell(2);
+            cell.setCellValue(startYearDate.plusMonths(j).format(dateFormat));
+            cell.setCellStyle(style4_2);
+    
+            // 「締日」
+            row = sheet.createRow(2);
+            cell = row.createCell(1);
+            cell.setCellValue("締日");
+            cell.setCellStyle(style4);
+            // 「YYYY年M月D日」
+            cell = row.createCell(2);
+            cell.setCellValue(startDate.plusMonths(1).minusDays(1).format(dateFormat));
+            cell.setCellStyle(style4_2);
+    
+            // 「社員番号」
+            row = sheet.createRow(3);
+            cell = row.createCell(1);
+            cell.setCellValue("社員番号");
+    
+            cell.setCellStyle(style5);
+            // 「氏名」
+            cell = row.createCell(2);
+            cell.setCellValue("氏名");
+            cell.setCellStyle(style5);
+            // 「担当」
+            cell = row.createCell(7);
+            cell.setCellValue("担当");
+            cell.setCellStyle(style5);
+            // 「確認」
+            cell = row.createCell(8);
+            cell.setCellValue("確認");
+            cell.setCellStyle(style5);
+    
+            // 社員番号の値
+            row = sheet.createRow(4);
+            cell = row.createCell(1);
+            cell.setCellValue(employeeCode);
+            // セルスタイルとフォントはstyle5,font5と共通
+            cell.setCellStyle(style5);
+            // 氏名の値
+            cell = row.createCell(2);
+            cell.setCellValue(name);
+            cell.setCellStyle(style5);
+            // 担当欄
+            cell = row.createCell(7);
+            cell.setCellStyle(style5);
+            // 確認欄
+            cell = row.createCell(8);
+            cell.setCellStyle(style5);
+    
+            // 「提出日」
+            row = sheet.createRow(5);
+            cell = row.createCell(6);
+            cell.setCellValue("提出日 " + startDate.plusMonths(1).minusDays(1).format(dateFormat));
+            
+
+            cell.setCellStyle(style6);
+    
+    
+            // テーブルヘッダー
+            row = sheet.createRow(6);
+    
+            // 「日付」
+            // 「作業項目」「備考」「開始時間」「終了時間」「全時間」「作業時間」「残業時間」
+            for (int i = 0; i < 9; i++) {
+                cell = row.createCell(i);
+                cell.setCellValue(tableHeaderStrings[i]);
+                cell.setCellStyle(styleTableHeader);
+            }
+    
+            // for (int i = 2; i < 9; i++) {
+            //     cell = row.createCell(i);
+            //     cell.setCellStyle(styleTableHeader);
+            // }
+    
+            // カレンダー作成
+            // List<XSSFCell> cellList = new ArrayList<>();
+            // XSSFCell[] cellB = null;
+            XSSFCell cellA = null;
+            XSSFCell cellB = null;
+            
+            LocalDate date;
+            for (int i = 0; i < 31; i++) {
+                row = sheet.createRow(i + 7);
+                cellA = row.createCell(0);
+                cellB = row.createCell(1);
+    
+                // 右３列にスタイルを適用
+                row.createCell(6).setCellStyle(styleThreeRightColumn);
+                row.createCell(7).setCellStyle(styleThreeRightColumn);
+                row.createCell(8).setCellStyle(styleThreeRightColumn);
+    
+                // 日付を加算する
+                date = startDate.plusDays(i);
+                cellA.setCellValue(date.getDayOfMonth());
+                // 日付を
+                cellB.setCellValue(date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.JAPANESE));
+    
+                // セルスタイルのセット
+                if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                    // 休日のスタイル
+                    cellA.setCellStyle(styleWeekEnd);
+                    cellB.setCellStyle(styleWeekEnd);
+                } else {
+                    // 平日のスタイル
+                    cellA.setCellStyle(styleWeekDay);
+                    cellB.setCellStyle(styleWeekDay);
+                }
+            }
+    
+            // 集計行
+            row = sheet.createRow(38);
+            XSSFCell totalCell = row.createCell(0);
+            totalCell.setCellValue("合計");
+
+            totalCell.setCellStyle(styleGoukei);
+            row.createCell(1).setCellStyle(styleGoukei);
+    
+            // styleTotalNotEdge.setBorderTop(BorderStyle.DOUBLE);
+            // styleTotalNotEdge.setBorderBottom(BorderStyle.THICK);
+    
+            for (int i = 2; i < 9; i++) {
+                row.createCell(i).setCellStyle(styleTotalNotEdge);
+            }
+
+
+        }
+        
+
     }
 
 
