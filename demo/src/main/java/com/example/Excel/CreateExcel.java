@@ -796,18 +796,43 @@ public class CreateExcel {
         XSSFSheet sheet;
 
         
-        for(int j = 1; j <= 12; j++){
+        for(int j = 0; j < 12; j++){
             LocalDate startDate = startYearDate.plusMonths(j);
-            sheet = wb.getSheet(j + "月");
+            sheet = wb.getSheet(startDate.getMonthValue() + "月");
             // セル結合している部分は最初に結合する
             // sheet.getRow(0).getCell(0).setCellValue("2021年" + j + "月分");
             sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 2));
             sheet.addMergedRegion(new CellRangeAddress(5, 5, 6, 8));
             sheet.addMergedRegion(new CellRangeAddress(6, 6, 0, 1));
             sheet.addMergedRegion(new CellRangeAddress(38, 38, 0, 1));
+            
+            // 幅
+            int[] width = {
+                1962, 1962, 7082, 4437, 2474, 
+                2474, 2474, 2474, 2474, 3640, 
+                2417, 2417, 2417, 2417, 2304, 
+                2304, 2304
+            };
+
+            short[] height = {
+                468, 300, 300, 300, 870, 420, 450, 450, 450, 450, 
+                450, 450, 450, 450, 450, 450, 450, 450, 450, 450, 
+                450, 450, 450, 450, 450, 450, 450, 450, 450, 450, 
+                450, 450, 450, 450, 450, 450, 450, 450, 498, 315, 408 
+            };
 
             // 列幅を設定する
-            for(int i = 0; i < )
+            for(int i = 0; i < width.length; i++){
+                sheet.setColumnWidth(i, width[i]);
+            }
+
+            // 高さを設定する
+            for(int i = 0; i < height.length; i++){
+                row = sheet.createRow(i);
+                row.setHeight(height[i]);
+            }
+
+            
             // sheet = wb.getSheet("4月");
             // 「YYYY年M月分」
             // merge cells of 年月
@@ -817,8 +842,9 @@ public class CreateExcel {
             // セルごとにフォントをセットしないといけない？
             
             // CellStyle はセルごとにインスタンスを生成する必要がある
-            row = sheet.createRow(0);
+            row = sheet.getRow(0);
             cell = row.createCell(0);
+            cell.setCellValue(startDate.getYear() + "年" + startDate.getMonthValue() + "月分");
             cell.setCellStyle(style);
     
             // 「勤怠報告書」
@@ -833,7 +859,7 @@ public class CreateExcel {
             cell.setCellStyle(style3);
     
             // 「開始」
-            row = sheet.createRow(1);
+            row = sheet.getRow(1);
             cell = row.createCell(1);
             cell.setCellValue("開始");
     
@@ -844,7 +870,7 @@ public class CreateExcel {
             cell.setCellStyle(style4_2);
     
             // 「締日」
-            row = sheet.createRow(2);
+            row = sheet.getRow(2);
             cell = row.createCell(1);
             cell.setCellValue("締日");
             cell.setCellStyle(style4);
@@ -854,7 +880,7 @@ public class CreateExcel {
             cell.setCellStyle(style4_2);
     
             // 「社員番号」
-            row = sheet.createRow(3);
+            row = sheet.getRow(3);
             cell = row.createCell(1);
             cell.setCellValue("社員番号");
     
@@ -873,7 +899,7 @@ public class CreateExcel {
             cell.setCellStyle(style5);
     
             // 社員番号の値
-            row = sheet.createRow(4);
+            row = sheet.getRow(4);
             cell = row.createCell(1);
             cell.setCellValue(employeeCode);
             // セルスタイルとフォントはstyle5,font5と共通
@@ -890,7 +916,7 @@ public class CreateExcel {
             cell.setCellStyle(style5);
     
             // 「提出日」
-            row = sheet.createRow(5);
+            row = sheet.getRow(5);
             cell = row.createCell(6);
             cell.setCellValue("提出日 " + startDate.plusMonths(1).minusDays(1).format(dateFormat));
             
@@ -899,7 +925,7 @@ public class CreateExcel {
     
     
             // テーブルヘッダー
-            row = sheet.createRow(6);
+            row = sheet.getRow(6);
     
             // 「日付」
             // 「作業項目」「備考」「開始時間」「終了時間」「全時間」「作業時間」「残業時間」
@@ -922,7 +948,7 @@ public class CreateExcel {
             
             LocalDate date;
             for (int i = 0; i < 31; i++) {
-                row = sheet.createRow(i + 7);
+                row = sheet.getRow(i + 7);
                 cellA = row.createCell(0);
                 cellB = row.createCell(1);
     
@@ -950,7 +976,7 @@ public class CreateExcel {
             }
     
             // 集計行
-            row = sheet.createRow(38);
+            row = sheet.getRow(38);
             XSSFCell totalCell = row.createCell(0);
             totalCell.setCellValue("合計");
 

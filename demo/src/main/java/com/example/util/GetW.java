@@ -25,7 +25,7 @@ public class GetW {
             is = new FileInputStream(file);
             XSSFWorkbook wb = (XSSFWorkbook)WorkbookFactory.create(is);
             // XSSFSheet todokedeSheet = wb.getSheet("届出");
-            XSSFSheet todokedeSheet = wb.getSheet("振替出勤管理表");
+            XSSFSheet todokedeSheet = wb.getSheet("4月");
 
             System.out.println("********幅を取得********");
             for(int i = 0; i < 17; i++){
